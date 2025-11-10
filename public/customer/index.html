@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلب استرجاع - Salla Returns</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .return-number {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .return-number h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .return-number .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        .track-section {
+            display: none;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .track-section.show {
+            display: block;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-new {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-refunded {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .required {
+            color: red;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 20px;
+            }
+
+            .logo h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <h1>🔄 طلب استرجاع</h1>
+                <p>نظام إدارة المرتجعات</p>
+            </div>
+
+            <div id="alert" class="alert"></div>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px;">جاري المعالجة...</p>
+            </div>
+
+            <form id="returnForm">
+                <input type="hidden" id="storeId" name="storeId" value="">
+
+                <div class="form-group">
+                    <label for="orderId">رقم الطلب <span class="required">*</span></label>
+                    <input type="text" id="orderId" name="orderId" required placeholder="مثال: 123456">
+                </div>
+
+                <div class="form-group">
+                    <label for="customerPhone">رقم الجوال <span class="required">*</span></label>
+                    <input type="tel" id="customerPhone" name="customerPhone" required placeholder="مثال: 0501234567">
+                </div>
+
+                <div class="form-group">
+                    <label for="customerName">الاسم الكامل <span class="required">*</span></label>
+                    <input type="text" id="customerName" name="customerName" required placeholder="الاسم الكامل">
+                </div>
+
+                <div class="form-group">
+                    <label for="iban">رقم الآيبان (IBAN) <span class="required">*</span></label>
+                    <input type="text" id="iban" name="iban" required placeholder="SA00 0000 0000 0000 0000 0000">
+                </div>
+
+                <div class="form-group">
+                    <label for="bankName">اسم البنك <span class="required">*</span></label>
+                    <select id="bankName" name="bankName" required>
+                        <option value="">اختر البنك</option>
+                        <option value="الراجحي">الراجحي</option>
+                        <option value="الأهلي">الأهلي</option>
+                        <option value="الفرنسي">الفرنسي</option>
+                        <option value="سامبا">سامبا</option>
+                        <option value="الرياض">الرياض</option>
+                        <option value="البلاد">البلاد</option>
+                        <option value="الإنماء">الإنماء</option>
+                        <option value="الجزيرة">الجزيرة</option>
+                        <option value="الاستثمار">الاستثمار</option>
+                        <option value="العربي">العربي</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">سبب الاسترجاع <span class="required">*</span></label>
+                    <textarea id="reason" name="reason" required placeholder="اكتب سبب الاسترجاع بالتفصيل..."></textarea>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">إرسال طلب الاسترجاع</button>
+            </form>
+
+            <div id="returnNumber" class="return-number" style="display: none;">
+                <h3>✅ تم إرسال طلبك بنجاح!</h3>
+                <p>رقم طلب الاسترجاع الخاص بك:</p>
+                <div class="number" id="returnNumberValue"></div>
+                <p style="color: #666; font-size: 14px; margin-top: 15px;">
+                    احتفظ بهذا الرقم لمتابعة حالة طلبك
+                </p>
+            </div>
+        </div>
+
+        <div class="card track-section" id="trackSection">
+            <h2 style="text-align: center; margin-bottom: 20px;">تتبع طلب الاسترجاع</h2>
+            <div class="form-group">
+                <label for="trackNumber">رقم طلب الاسترجاع</label>
+                <input type="text" id="trackNumber" placeholder="مثال: RET-XXX-XXX">
+            </div>
+            <button type="button" class="btn" onclick="trackReturn()">تتبع الطلب</button>
+            <div id="trackResult" style="margin-top: 20px; display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        // Get store ID from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const storeId = urlParams.get('store') || 'demo-store';
+        document.getElementById('storeId').value = storeId;
+
+        // Handle form submission
+        document.getElementById('returnForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                storeId: document.getElementById('storeId').value,
+                orderId: document.getElementById('orderId').value,
+                customerPhone: document.getElementById('customerPhone').value,
+                customerName: document.getElementById('customerName').value,
+                iban: document.getElementById('iban').value,
+                bankName: document.getElementById('bankName').value,
+                reason: document.getElementById('reason').value
+            };
+
+            showLoading(true);
+            hideAlert();
+
+            try {
+                const response = await fetch(`${API_URL}/returns/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('returnForm').style.display = 'none';
+                    document.getElementById('returnNumber').style.display = 'block';
+                    document.getElementById('returnNumberValue').textContent = result.data.returnNumber;
+                    document.getElementById('trackSection').classList.add('show');
+                    showAlert('تم إرسال طلب الاسترجاع بنجاح!', 'success');
+                } else {
+                    showAlert(result.message || 'حدث خطأ، يرجى المحاولة مرة أخرى', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('حدث خطأ في الاتصال، يرجى المحاولة مرة أخرى', 'error');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Track return function
+        async function trackReturn() {
+            const trackNumber = document.getElementById('trackNumber').value;
+
+            if (!trackNumber) {
+                showAlert('الرجاء إدخال رقم طلب الاسترجاع', 'error');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const response = await fetch(`${API_URL}/returns/track/${trackNumber}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    displayTrackResult(result.data);
+                } else {
+                    showAlert(result.message || 'طلب الاسترجاع غير موجود', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('حدث خطأ في البحث عن الطلب', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Display track result
+        function displayTrackResult(data) {
+            const statusMap = {
+                'new': { text: 'جديد', class: 'status-new' },
+                'approved': { text: 'مقبول', class: 'status-approved' },
+                'rejected': { text: 'مرفوض', class: 'status-rejected' },
+                'refunded': { text: 'تم الاسترجاع', class: 'status-refunded' }
+            };
+
+            const status = statusMap[data.status] || { text: data.status, class: 'status-new' };
+
+            const html = `
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <h3>حالة الطلب:</h3>
+                    <span class="status-badge ${status.class}">${status.text}</span>
+                    <p style="margin-top: 15px;"><strong>رقم الطلب:</strong> ${data.order_id}</p>
+                    <p><strong>اسم العميل:</strong> ${data.customer_name}</p>
+                    <p><strong>تاريخ الطلب:</strong> ${new Date(data.created_at).toLocaleDateString('ar-SA')}</p>
+                    ${data.notes ? `<p style="margin-top: 10px; color: #666;"><strong>ملاحظات:</strong> ${data.notes}</p>` : ''}
+                </div>
+            `;
+
+            document.getElementById('trackResult').innerHTML = html;
+            document.getElementById('trackResult').style.display = 'block';
+        }
+
+        // Show/hide loading
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('show', show);
+            document.getElementById('submitBtn').disabled = show;
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type} show`;
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+
+        // Hide alert
+        function hideAlert() {
+            document.getElementById('alert').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
