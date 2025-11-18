@@ -2,16 +2,16 @@ import { motion } from 'framer-motion';
 
 const Clients = () => {
   const clients = [
-    { name: 'Flynas', logo: '✈️' },
-    { name: 'Saudi Airlines', logo: '🛫' },
-    { name: 'GEA', logo: '🏢' },
-    { name: 'STC', logo: '📡' },
-    { name: 'Mobily', logo: '📱' },
-    { name: 'Ministry of Education', logo: '🎓' },
-    { name: 'SABIC', logo: '⚗️' },
-    { name: 'NEOM', logo: '🌆' },
-    { name: 'SPL', logo: '🏭' },
-    { name: 'CST', logo: '💼' },
+    { name: 'Flynas', logo: '/clients/flynas.png' },
+    { name: 'Saudi Airlines', logo: '/clients/saudi-airlines.png' },
+    { name: 'GEA', logo: '/clients/gea.png' },
+    { name: 'STC', logo: '/clients/stc.png' },
+    { name: 'Mobily', logo: '/clients/mobily.png' },
+    { name: 'Ministry of Education', logo: '/clients/ministry-education.png' },
+    { name: 'SABIC', logo: '/clients/sabic.png' },
+    { name: 'NEOM', logo: '/clients/neom.png' },
+    { name: 'SPL', logo: '/clients/spl.png' },
+    { name: 'CST', logo: '/clients/cst.png' },
   ];
 
   return (
@@ -55,8 +55,23 @@ const Clients = () => {
               whileHover={{ scale: 1.1, y: -10 }}
               className="bg-rich-black/50 backdrop-blur-md rounded-xl p-8 border border-emerald-green/20 hover:border-mountain-meadow/50 transition-all duration-300 flex flex-col items-center justify-center"
             >
-              <div className="text-5xl mb-3">{client.logo}</div>
-              <div className="text-anti-flash-white font-semibold text-center">
+              {/* Client Logo */}
+              <div className="w-full h-20 flex items-center justify-center mb-3">
+                <img
+                  src={client.logo}
+                  alt={client.name}
+                  className="max-w-full max-h-full object-contain filter brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
+                  onError={(e) => {
+                    // Fallback if image doesn't exist
+                    e.target.style.display = 'none';
+                    e.target.nextElementSibling.style.display = 'block';
+                  }}
+                />
+                <div className="text-anti-flash-white font-bold text-lg hidden">
+                  {client.name}
+                </div>
+              </div>
+              <div className="text-anti-flash-white/60 font-medium text-center text-sm">
                 {client.name}
               </div>
             </motion.div>

@@ -33,12 +33,25 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <motion.div
+          <motion.a
+            href="#home"
             whileHover={{ scale: 1.05 }}
-            className="text-2xl font-bold text-mountain-meadow"
+            className="flex items-center"
           >
-            R00T
-          </motion.div>
+            <img
+              src="/logo.png"
+              alt="R00T Logo"
+              className="h-10 w-auto"
+              onError={(e) => {
+                // Fallback to text logo if image doesn't exist
+                e.target.style.display = 'none';
+                e.target.nextElementSibling.style.display = 'block';
+              }}
+            />
+            <span className="text-2xl font-bold text-mountain-meadow hidden">
+              R00T
+            </span>
+          </motion.a>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-8">
